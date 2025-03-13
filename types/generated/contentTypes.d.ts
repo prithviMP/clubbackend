@@ -771,12 +771,19 @@ export interface ApiCategoryCategory extends Struct.CollectionTypeSchema {
     singularName: 'category';
     pluralName: 'categories';
     displayName: 'Category';
-    description: 'Organize your content into categories';
+    description: '';
   };
   options: {
     draftAndPublish: false;
   };
   attributes: {
+    name: Schema.Attribute.String &
+      Schema.Attribute.Required &
+      Schema.Attribute.Unique;
+    description: Schema.Attribute.Text;
+    slug: Schema.Attribute.UID<'name'>;
+    products: Schema.Attribute.Relation<'manyToMany', 'api::product.product'>;
+    image: Schema.Attribute.Media<'images'>;
     createdAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;
@@ -1296,6 +1303,19 @@ export interface ApiProductProduct extends Struct.CollectionTypeSchema {
     >;
     sizes: Schema.Attribute.Relation<'oneToMany', 'api::size.size'>;
     product_Details: Schema.Attribute.Text;
+    rating: Schema.Attribute.Decimal &
+      Schema.Attribute.SetMinMax<
+        {
+          min: 0;
+          max: 5;
+        },
+        number
+      > &
+      Schema.Attribute.DefaultTo<0>;
+    categories: Schema.Attribute.Relation<
+      'manyToMany',
+      'api::category.category'
+    >;
     createdAt: Schema.Attribute.DateTime;
     updatedAt: Schema.Attribute.DateTime;
     publishedAt: Schema.Attribute.DateTime;
